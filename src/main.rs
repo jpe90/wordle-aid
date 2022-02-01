@@ -144,7 +144,6 @@ impl Guesses {
         self.vec.len()
     }
 
-    // we want this to be passed the guess string and the result
     fn add_guess(&mut self, guessed_word: GuessedWord) {
         if self.len() < 6 {
             self.vec.push(guessed_word);
@@ -166,7 +165,6 @@ fn used_at_least_once(hash: &HashSet<char>, strng: &str) -> bool {
     let mut successful_match = true;
     for item in hash {
         successful_match = successful_match && strng.chars().any(|x| x == *item);
-        // println!("item is {}",item)
     }
     successful_match
 }
