@@ -6,6 +6,7 @@ use crate::wordle_words::WORD_LIST;
 
 mod wordle_words;
 
+// TODO: implement copy
 #[derive(Debug, Clone)]
 enum GuessedLetterResult {
     NotUsed,
@@ -23,6 +24,7 @@ impl fmt::Display for GuessedLetterResult {
     }
 }
 
+// TODO: implement copy
 #[derive(Debug, Clone)]
 struct GuessedLetter {
     letter: char,
@@ -81,13 +83,14 @@ impl AggregateWordResult {
                 };
                 match current_letter.result {
                     GuessedLetterResult::WrongSpot => {
-                        wrong_spot.insert(Some(current_letter.letter).unwrap());
-                        used_somewhere.insert(Some(current_letter.letter).unwrap())
+                        wrong_spot.insert(current_letter.letter);
+                        used_somewhere.insert(current_letter.letter)
                     }
                     GuessedLetterResult::NotUsed => {
                         not_used.insert(Some(current_letter.letter).unwrap())
                     }
-                    _ => false,
+                    // clarifies intent
+                    GuessedLetterResult::CorrectSpot => false,
                 };
             }
             aggregate_letter_results.push(AggregateLetterResult {
@@ -185,6 +188,7 @@ fn run_guess_loop(mut guesses: Guesses, words: &[&str]) {
         // returns flines so that I could write some tests for filter behavior,
         // but I couldn't figure out a type signature that lets me
         // return a filtered iterator from a function
+        // TODO: check https://doc.rust-lang.org/stable/book/ch10-02-traits.html#returning-types-that-implement-traits
         let agg = AggregateWordResult::from(&guesses.vec);
         let mut filtered_words = words.iter().filter(|x| agg.word_matches(x));
         let mut display_words = Vec::new();

@@ -1,7 +1,7 @@
 // make original list of 5 letter words available throughout lifetime of program
 // so we can push and pop filters as desired. i've assumed this is not an
 // unreasonable amount of data to keep in memory
-
+// TODO: experiment with using [u8; 5] rather than &str
 pub static WORD_LIST: &[&str] = &[
     "aalii", "abaca", "aback", "abaff", "abaft", "abase", "abash", "abask", "abate", "abave",
     "abaze", "abbas", "abbey", "abbot", "abdal", "abdat", "abeam", "abear", "abele", "abhor",
