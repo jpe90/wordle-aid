@@ -1,7 +1,8 @@
-use crate::wordle_words::word_list;
 use std::collections::HashSet;
 use std::fmt;
 use std::io;
+
+use crate::wordle_words::WORD_LIST;
 
 mod wordle_words;
 
@@ -170,13 +171,13 @@ fn used_at_least_once(hash: &HashSet<char>, strng: &str) -> bool {
 }
 
 fn main() {
-    let words = word_list();
+    let words = WORD_LIST;
     let guesses = Guesses::new();
     println!("Guess any five letter word- \"arose\" is a good choice!");
     run_guess_loop(guesses, words)
 }
 
-fn run_guess_loop(mut guesses: Guesses, words: Vec<&str>) {
+fn run_guess_loop(mut guesses: Guesses, words: &[&str]) {
     loop {
         get_guess(&mut guesses);
 
@@ -291,7 +292,7 @@ mod tests {
     use super::*;
 
     fn filtered_words_contains_entry(guesses: &Guesses, entry: &str) -> bool {
-        let words = word_list();
+        let words = WORD_LIST;
         let agg = AggregateWordResult::from(&guesses.vec);
         let mut filtered_words = words.iter().filter(|x| agg.word_matches(x));
         filtered_words.any(|&word| word == entry)
