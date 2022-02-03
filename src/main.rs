@@ -6,7 +6,6 @@ use crate::wordle_words::WORD_LIST;
 
 mod wordle_words;
 
-// TODO: implement copy
 #[derive(Debug, Copy, Clone)]
 enum GuessedLetterResult {
     NotUsed,
@@ -24,7 +23,6 @@ impl fmt::Display for GuessedLetterResult {
     }
 }
 
-// TODO: implement copy
 #[derive(Debug, Copy, Clone)]
 struct GuessedLetter {
     letter: char,
@@ -182,14 +180,7 @@ fn main() {
 fn run_guess_loop(mut guesses: Guesses, words: &[&str]) {
     loop {
         get_guess(&mut guesses);
-
-        // I wanted to refactor the below two lines into a function call that
-        // returns flines so that I could write some tests for filter behavior,
-        // but I couldn't figure out a type signature that lets me
-        // return a filtered iterator from a function
-        // TODO: check https://doc.rust-lang.org/stable/book/ch10-02-traits.html#returning-types-that-implement-traits
-        let agg = AggregateWordResult::from(&guesses.vec);
-        let mut filtered_words = words.iter().filter(|x| agg.word_matches(x));
+        let mut filtered_words = get_filtered_words(&guesses, words);
         let mut display_words = Vec::new();
         let mut item_index = 0;
         while item_index < 10 {
@@ -209,6 +200,12 @@ fn run_guess_loop(mut guesses: Guesses, words: &[&str]) {
             }
         }
     }
+}
+
+fn get_filtered_words<'a>(guesses: &Guesses, words: &'a [&'a str]) -> impl Iterator<Item = &'a &'a str> {
+    let agg = AggregateWordResult::from(&guesses.vec);
+    let filtered_words = words.iter().filter(move |x| agg.word_matches(x));
+    filtered_words
 }
 
 fn get_guess(guesses: &mut Guesses) {
@@ -249,7 +246,9 @@ fn prompt_for_results(guess: String) -> GuessedWord {
             letters.push(guessed_letter);
         }
         loop {
-            let guessed_word = GuessedWord { letters: letters.clone() };
+            let guessed_word = GuessedWord {
+                letters: letters.clone(),
+            };
             println!(
                 "You entered {}\nIs this correct? Please enter y or n",
                 guessed_word
@@ -295,6 +294,8 @@ mod tests {
         let mut filtered_words = words.iter().filter(|x| agg.word_matches(x));
         filtered_words.any(|&word| word == entry) //test
     }
+
+    // TODO: add more tests
 
     // quick sanity check
     #[test]
