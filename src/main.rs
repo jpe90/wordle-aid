@@ -7,7 +7,7 @@ use crate::wordle_words::WORD_LIST;
 mod wordle_words;
 
 // TODO: implement copy
-#[derive(Debug, Clone)]
+#[derive(Debug, Copy, Clone)]
 enum GuessedLetterResult {
     NotUsed,
     WrongSpot,
@@ -25,7 +25,7 @@ impl fmt::Display for GuessedLetterResult {
 }
 
 // TODO: implement copy
-#[derive(Debug, Clone)]
+#[derive(Debug, Copy, Clone)]
 struct GuessedLetter {
     letter: char,
     result: GuessedLetterResult,
@@ -94,9 +94,8 @@ impl AggregateWordResult {
                 };
             }
             aggregate_letter_results.push(AggregateLetterResult {
-                // TODO: figure out how to accomplish this without a clone
-                wrong_spot: wrong_spot.clone(),
                 correct_spot,
+                wrong_spot,
             });
             letter_index += 1;
         }
@@ -247,15 +246,10 @@ fn prompt_for_results(guess: String) -> GuessedWord {
             );
             let result = prompt_for_color();
             let guessed_letter = GuessedLetter { letter, result };
-            // TODO: figure out how to do this without a clone
-            letters.push(guessed_letter.clone());
+            letters.push(guessed_letter);
         }
         loop {
-            // TODO: figure out how to do this without a clone
-            let cloned_letters = letters.clone();
-            let guessed_word = GuessedWord {
-                letters: cloned_letters,
-            };
+            let guessed_word = GuessedWord { letters: letters.clone() };
             println!(
                 "You entered {}\nIs this correct? Please enter y or n",
                 guessed_word
@@ -299,7 +293,7 @@ mod tests {
         let words = WORD_LIST;
         let agg = AggregateWordResult::from(&guesses.vec);
         let mut filtered_words = words.iter().filter(|x| agg.word_matches(x));
-        filtered_words.any(|&word| word == entry)
+        filtered_words.any(|&word| word == entry) //test
     }
 
     // quick sanity check
